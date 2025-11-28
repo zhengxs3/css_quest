@@ -1,0 +1,83 @@
+.flex{
+    display: flex;
+    gap: 50px;
+    margin: 20px;
+    align-items: center;
+}
+
+/*-------------line------------------------------------------*/
+.line {
+  width: 200px;
+  height: 2px;
+  background: black;
+}
+
+.vertical-line {
+  width: 2px;
+  height: 200px;
+  background: black;
+}
+
+/*-------------circle------------------------------------------*/
+.circle {    
+    width: 100px;    
+    height: 100px;    
+    background-color: red;    
+    border-radius: 50%; 
+}
+
+.oval {
+    width: 150px;
+    height: 100px;
+    background-color: gold;
+    border-radius: 50%;
+}
+
+.oval1 {
+    width: 80px;
+    height: 100px;
+    background-color: lightpink;
+    border-radius: 50%;
+}
+
+.half-circle {
+  width: 150px;
+  height: 75px;
+  background: orange;
+  border-radius: 150px 150px 0 0;
+}
+
+.pill {
+  width: 150px;
+  height: 50px;
+  background: purple;
+  border-radius: 50px;
+}
+
+
+
+/*-------------square------------------------------------------*/
+.square {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+
+.rectangle {
+    width: 150px;
+    height: 100px;
+    background-color: coral;
+}
+
+.rectangle1 {
+    width: 88px;
+    height: 100px;
+    background-color: lightgray;
+}
+
+.round-rect {
+  width: 150px;
+  height: 80px;
+  background: skyblue;
+  border-radius: 12px;
+}

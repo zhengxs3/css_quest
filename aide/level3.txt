@@ -1,0 +1,12 @@
+background:linear-gradient(45deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+animation:pulse 2s infinite;
+@keyframes pulse { 0%, 100% { transform:scale(1); } 50% { transform:scale(1.1); }
+transform:perspective(500px) rotateY(25deg) rotateX(25deg);
+box-shadow:9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+color:#06FFA5; 
+display:flex; 
+align-items:center;
+justify-content:center; 
+font-size:24px; 
+text-shadow:0 0 10px #06FFA5; &::before { content:"LUEUR"; }

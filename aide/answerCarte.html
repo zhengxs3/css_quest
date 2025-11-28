@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cartes</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:#0f172a;
+      color:#e5e7eb;
+    }
+
+    body {
+      margin:0;
+      padding:20px 24px 40px;
+    }
+
+    h1 {
+      text-align:center;
+      margin-bottom:24px;
+      color:#f9fafb;
+    }
+
+    .intro {
+      max-width:900px;
+      margin:0 auto 24px;
+      font-size:14px;
+      color:#9ca3af;
+      line-height:1.6;
+    }
+
+    .category {
+      max-width:1100px;
+      margin:0 auto 32px;
+      border-radius:16px;
+      background:rgba(15,23,42,0.9);
+      border:1px solid rgba(148,163,184,0.3);
+      box-shadow:0 18px 45px rgba(15,23,42,0.8);
+      overflow:hidden;
+    }
+
+    .category-header {
+      padding:16px 20px;
+      background:linear-gradient(135deg,#1CCAE8,#9D4EDD);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      color:#0b1120;
+    }
+
+    .category-title {
+      font-size:20px;
+      font-weight:700;
+      letter-spacing:0.04em;
+      text-transform:uppercase;
+    }
+
+    .category-badge {
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(15,23,42,0.85);
+      color:#e5e7eb;
+    }
+
+    .difficulty-wrapper {
+      display:flex;
+      flex-wrap:wrap;
+      gap:20px;
+      padding:18px 18px 20px;
+      background:radial-gradient(circle at top left,rgba(148,163,184,0.16),transparent 65%);
+    }
+
+    .difficulty-column {
+      flex:1 1 260px;
+      min-width:260px;
+      background:rgba(15,23,42,0.9);
+      border-radius:12px;
+      border:1px solid rgba(55,65,81,0.8);
+      padding:12px 12px 14px;
+      backdrop-filter:blur(12px);
+    }
+
+    .difficulty-title {
+      font-size:14px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      margin-bottom:8px;
+      color:#9CA3AF;
+    }
+
+    .difficulty-title span {
+      font-size:11px;
+      padding:3px 7px;
+      border-radius:999px;
+      margin-left:6px;
+      background:rgba(31,41,55,0.9);
+      color:#d1d5db;
+      vertical-align:middle;
+    }
+
+    .difficulty-title.easy span {
+      border:1px solid #22c55e;
+    }
+    .difficulty-title.medium span {
+      border:1px solid #eab308;
+    }
+    .difficulty-title.hard span {
+      border:1px solid #f97316;
+    }
+
+    .level-list {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:430px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .level-card {
+      border-radius:10px;
+      border:1px solid rgba(55,65,81,0.9);
+      background:rgba(15,23,42,0.95);
+      padding:10px 10px 11px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .level-top-row {
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+
+    .level-info {
+      min-width:160px;
+    }
+
+    .level-desc {
+      font-size:13px;
+      font-weight:600;
+      color:#e5e7eb;
+    }
+
+    .chips {
+      display:flex;
+      gap:6px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:2px;
+    }
+
+    .chip {
+      font-size:10px;
+      padding:2px 6px;
+      border-radius:999px;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+    }
+
+    .chip.type-css {
+      border:1px solid #1CCAE8;
+      color:#1CCAE8;
+      background:rgba(15,23,42,0.8);
+    }
+
+    .chip.type-html {
+      border:1px solid #F97316;
+      color:#F97316;
+      background:rgba(15,23,42,0.8);
+    }
+
+    .chip.type-htmlcss {
+      border:1px solid #22c55e;
+      color:#22c55e;
+      background:rgba(15,23,42,0.8);
+    }
+
+    .level-preview {
+      flex:0 0 160px;
+      min-width:260px;
+      min-height:135px;
+      max-width:220px;
+      background:#020617;
+      border-radius:8px;
+      border:1px solid rgba(31,41,55,0.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px;
+      overflow:hidden;
+    }
+
+    .shape-box {
+      display:block;
+    }
+
+    .level-hint {
+      font-size:11px;
+      color:#9ca3af;
+      padding:4px 7px;
+      border-radius:7px;
+      background:rgba(15,23,42,0.95);
+      border:1px dashed rgba(75,85,99,0.9);
+    }
+
+    .level-code {
+      font-size:11px;
+      color:#e5e7eb;
+      background:#020617;
+      border-radius:7px;
+      border:1px solid rgba(31,41,55,0.9);
+      padding:6px 7px;
+      overflow:auto;
+    }
+
+    .level-code strong {
+      display:block;
+      margin-bottom:2px;
+      color:#a5b4fc;
+    }
+
+    pre {
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+
+    @media (max-width:768px) {
+      body {
+        padding:14px 12px 30px;
+      }
+      .category {
+        margin:0 auto 20px;
+      }
+      .difficulty-wrapper {
+        padding:12px;
+      }
+      .level-top-row {
+        flex-direction:column;
+      }
+      .level-preview {
+        max-width:none;
+      }
+
+      .html-box,
+      .input-card,
+      .preview-box,
+      .code-box {
+        width: 100% !important;
+        min-width: unset;
+      }
+
+      .html-box {
+        padding: 15px;
+      }
+
+      .code-box,
+      .preview-box {
+        font-size: 14px;
+      }
+
+      .example,
+      .code-title {
+        font-size: 15px;
+      }
+
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cartes-root"></div>
+
+  <script>
+    const cartes = { 
+      html: {
+        easy: [
+          { desc: 'Carte 1 – Button', html: '<button>click-me</button>' },
+          { desc: 'Carte 2 – Checkbox with label', html: '<div><input type="checkbox"> Subscribe</div>' },
+          { desc: 'Carte 3 – Radio group', html: '<div><input type="radio" name="example"> Option 1<br><input type="radio" name="example"> Option 2</div>' },
+          { desc: 'Carte 4 – Title', html: '<h1>This is a Title</h1>' },
+          { desc: 'Carte 5 – Image', html: '<img src="img/Image.png" alt="Example Image" width="100">' },
+          { desc: 'Carte 6 – Unordered list', html: '<div><ul><li>First</li><li>Second</li><li>Third</li></ul></div>' },
+          { desc: 'Carte 7 – Password input', html: '<input type="password" placeholder="Enter password">' },
+          { desc: 'Carte 8 – Text input', html: '<input type="text" placeholder="Your name">' },
+          { desc: 'Carte 9 – Number input', html: '<input type="number" placeholder="0">' },
+          { desc: 'Carte 10 – Email input', html: '<input type="email" placeholder="Enter email">' }
+        ]
+      },
+
+      css: {
+        easy: [
+          { desc: 'Carte 11', css: 'width: 94px; height: 94px; background-color: #FF0000; border-radius: 50%;' },
+          { desc: 'Carte 12', css: 'width: 87px; height: 137px; border: 6px solid #E04997; border-radius: 12px;' },
+          { desc: 'Carte 13', css: 'width: 100px; height: 138px; background-color: #1CCAE8;' },
+          { desc: 'Carte 14', css: 'width: 80px; height: 80px; background-color: #D25400; transform: rotate(45deg);' },
+          { desc: 'Carte 15', css: 'width: 100px; height: 100px; background-color: #7DDBEB; border-radius: 10px;' },
+          { desc: 'Carte 16', css: 'width: 93px; height: 93px; background-color: #0055FF; border-radius: 50%; border: 7px solid #FDF3F3;' },
+          { desc: 'Carte 17', css: 'width: 0; height: 0; border-left: 59px solid transparent; border-right: 59px solid transparent; border-bottom: 118px solid #D9D9D9;' },
+          { desc: 'Carte 18', css: 'width: 86px; height: 165px; background-color: #91E413; border-radius: 50px;' },
+          { desc: 'Carte 19', css: 'width: 100px; height: 154px; background-color: #E04997; border: 6px solid #EE7B00; border-radius: 50%;' },
+          { desc: 'Carte 20', css: 'width: 0; height: 0; border-left: 64px solid transparent; border-right: 64px solid transparent; border-top: 128px solid #0E11D3;' }
+        ],
+        medium: [
+  { desc: 'Carte 41', css: 'width:100px; height:152px; background-color:#D25400; clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);' },
+
+  { desc: 'Carte 42', css: 'width:0; height:0; position:relative; border-left:54.5px solid transparent; border-right:54.5px solid transparent; border-bottom:109px solid rgb(14,17,211);' },
+
+  { desc: 'Carte 43', css: 'width:100px; height:126px; background:linear-gradient(#ED07C3,#25DCE6); clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);' },
+
+  { desc: 'Carte 44', css: 'width:100px; height:100px; border-radius:50%; background:#91E413; box-shadow:0 0 20px #91E413,0 0 40px #507E0B;' },
+
+  { desc: 'Carte 45', css: 'width:81px; height:81px; border-radius:50%; background:#ff0000; box-shadow:0 0 0 9.5px #690368,0 0 0 19px #9d9d9d;' },
+
+  { desc: 'Carte 46', css: 'width:100px; height:100px; border-radius:50%; background:#FF5900; border:3px dashed #FFFB00;' },
+
+  { desc: 'Carte 47', css: 'width:86px; height:93px; background:#7CF21A; clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);' }
+]
+
+      },
+
+      htmlcss: {
+        easy: [
+          { desc: 'Carte 21 – Primary button', html: '<button class="carte21">Click-me</button>', css: '.carte21 { width: 107px; height: 34px; background-color: #34A60A; color: #FFFFFF; border-radius: 5px; border: none; }' },
+          { desc: 'Carte 22 – Colored text', html: '<div class="carte22">Click-me</div>', css: '.carte22 { color: #25DCE6; }' },
+          { desc: 'Carte 23 – Outline button', html: '<button class="carte23">Finish</button>', css: '.carte23 { width: 107px; height: 34px; background: none; color: #FFFFFF; border-radius: 5px; border: 1px solid #ED07C3; }' },
+          { desc: 'Carte 24 – Secondary button', html: '<button class="carte24">Animation</button>', css: '.carte24 { width: 107px; height: 34px; background-color: #161330; color: #1CCAE8; border-radius: 5px; border: 1px solid #1CCAE8; } .carte24:active { width: 107px; height: 34px; background-color: #1CCAE8; color: #161330; border-radius: 5px; }' },
+          { desc: 'Carte 25 – Icon circle', html: '<div class="carte25"><img src="img/carte24.png" alt=""></div>', css: '.carte25 { width: 55px; height: 55px; background-color: #D25400; border-radius: 50%; display: flex; justify-content: center; align-items: center; }' },
+          { desc: 'Carte 26 – Label + input', html: '<div class="carte26"><label for="name"> name </label><input type="text" class="carte26_1" id="name"></div>', css: '.carte26 { color: #FFFFFF; } .carte26_1 { border-radius: 5px; }' },
+          { desc: 'Carte 27 – Colored word in text', html: '<div class="carte27">Text with <div class="carte27_1">color</div></div>', css: '.carte27 { color: #FFFFFF; } .carte27_1 { color: #25DCE6; display: inline; }' },
+          { desc: 'Carte 28 – Simple text block', html: '<div class="carte28">Cell 1 Cell 2</div>', css: '.carte28 { color: #FFFFFF; }' },
+          { desc: 'Carte 29 – List with child item', html: '<div class="carte29"><ul><li>Parent</li><li class="carte29_1">child</li></ul></div>', css: '.carte29 { color: FFFFFF; } .carte29_1 { margin-left: 15px; list-style: circle; }' },
+          { desc: 'Carte 30 – Textarea-like box', html: '<div class="carte30"><p>Type here...</p></div>', css: '.carte30 { width: 100px; height: 57px; border-radius: 5px; background: #F76F6F; text-align: center; color:#000; }' }
+        ],
+      
+      }
+    };
+
+    const root = document.getElementById('cartes-root');
+
+    function injectHtmlCssStyles() {
+      const styles = [];
+      const htmlcss = cartes.htmlcss;
+      ['easy', 'medium', 'hard'].forEach(levelKey => {
+        if (!htmlcss[levelKey]) return;
+        htmlcss[levelKey].forEach(item => {
+          if (item.css) styles.push(item.css);
+        });
+      });
+      const styleTag = document.createElement('style');
+      styleTag.textContent = styles.join('\n\n');
+      document.head.appendChild(styleTag);
+    }
+
+    function cssToInline(cssText) {
+      if (!cssText) return '';
+      let cleaned = cssText.split('@keyframes')[0]; 
+      cleaned = cleaned.split('&::')[0];   
+      return cleaned.trim();
+    }
+
+    function createLevelCard(item, typeKey) {
+      const card = document.createElement('div');
+      card.className = 'level-card';
+
+      const topRow = document.createElement('div');
+      topRow.className = 'level-top-row';
+
+      const info = document.createElement('div');
+      info.className = 'level-info';
+
+      const desc = document.createElement('div');
+      desc.className = 'level-desc';
+      desc.textContent = item.desc;
+      info.appendChild(desc);
+
+      const chipsWrap = document.createElement('div');
+      chipsWrap.className = 'chips';
+      const chip = document.createElement('span');
+      chip.className = 'chip type-' + typeKey;
+      chip.textContent = typeKey.toUpperCase();
+      chipsWrap.appendChild(chip);
+      info.appendChild(chipsWrap);
+
+      const preview = document.createElement('div');
+      preview.className = 'level-preview';
+
+      // 根据类型渲染预览
+      if (typeKey === 'css') {
+        const shape = document.createElement('div');
+        shape.className = 'shape-box';
+        shape.setAttribute('style', cssToInline(item.css));
+        preview.appendChild(shape);
+      } else if (typeKey === 'html') {
+        preview.innerHTML = item.html;
+      } else if (typeKey === 'htmlcss') {
+        preview.innerHTML = item.html;
+      }
+
+      topRow.appendChild(info);
+      topRow.appendChild(preview);
+      card.appendChild(topRow);
+
+      if (item.hint) {
+        const hint = document.createElement('div');
+        hint.className = 'level-hint';
+        hint.textContent = 'Hint: ' + item.hint;
+        card.appendChild(hint);
+      }
+
+      const code = document.createElement('div');
+      code.className = 'level-code';
+      const strong = document.createElement('strong');
+
+      let codeText = '';
+      if (item.css && item.html) {
+        strong.textContent = 'HTML + CSS';
+        codeText = 'HTML:\n' + item.html + '\n\nCSS:\n' + item.css;
+      } else if (item.css) {
+        strong.textContent = 'CSS';
+        codeText = item.css;
+      } else if (item.html) {
+        strong.textContent = 'HTML';
+        codeText = item.html;
+      }
+
+      const pre = document.createElement('pre');
+      pre.textContent = codeText;
+
+      code.appendChild(strong);
+      code.appendChild(pre);
+      card.appendChild(code);
+
+      return card;
+    }
+
+    function render() {
+      root.innerHTML = '';
+
+      const typeLabels = {
+        css: 'CSS',
+        html: 'HTML',
+        htmlcss: 'HTML + CSS'
+      };
+
+      const difficultyLabels = {
+        easy: 'Easy',
+        medium: 'Medium',
+        hard: 'Hard'
+      };
+
+      Object.keys(cartes).forEach(typeKey => {
+        const categoryData = cartes[typeKey];
+
+        const category = document.createElement('section');
+        category.className = 'category';
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+
+        const title = document.createElement('div');
+        title.className = 'category-title';
+        title.textContent = typeLabels[typeKey] || typeKey.toUpperCase();
+
+        const badge = document.createElement('div');
+        badge.className = 'category-badge';
+        badge.textContent = 'Type: ' + typeKey;
+
+        header.appendChild(title);
+        header.appendChild(badge);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'difficulty-wrapper';
+
+        ['easy', 'medium', 'hard'].forEach(levelKey => {
+          if (!categoryData[levelKey]) return;
+
+          const column = document.createElement('div');
+          column.className = 'difficulty-column';
+
+          const dt = document.createElement('div');
+          dt.className = 'difficulty-title ' + levelKey;
+          dt.innerHTML = difficultyLabels[levelKey] + '<span>' + (categoryData[levelKey].length || 0) + ' cartes</span>';
+
+          const list = document.createElement('div');
+          list.className = 'level-list';
+
+          categoryData[levelKey].forEach(item => {
+            list.appendChild(createLevelCard(item, typeKey));
+          });
+
+          column.appendChild(dt);
+          column.appendChild(list);
+          wrapper.appendChild(column);
+        });
+
+        category.appendChild(header);
+        category.appendChild(wrapper);
+        root.appendChild(category);
+      });
+    }
+
+    injectHtmlCssStyles();
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,655 @@
+// Éléments DOM
+const editorEl = document.getElementById('editor');
+const challengePreview = document.getElementById('challengePreview');
+const preview = document.getElementById('preview');
+const challengeDesc = document.getElementById('challengeDesc');
+const levelBadge = document.getElementById('levelBadge');
+const hintBox = document.getElementById('hintBox');
+const scoreDisplay = document.getElementById('score');
+const streakDisplay = document.getElementById('streak');
+const levelNum = document.getElementById('levelNum');
+const hintsLeftDisplay = document.getElementById('hintsLeft');
+const progressFill = document.getElementById('progressFill');
+const feedback = document.getElementById('feedback');
+const feedbackTitle = document.getElementById('feedbackTitle');
+const feedbackText = document.getElementById('feedbackText');
+const comparisonView = document.getElementById('comparisonView');
+const achievementsContainer = document.getElementById('achievements');
+const levelCounter = document.getElementById('levelCounter');
+const timerDisplay = document.getElementById('timerDisplay');
+const resultMessage = document.getElementById('resultMessage');
+const startBtn = document.getElementById('start');
+const colorPalette = document.getElementById('colorPalette');
+const compareBtn = document.getElementById('compareBtn'); // bouton Comparer
+
+const MAX_HINTS = 3;
+
+// Flag pour la comparaison
+let canCompare = false;
+let lastCorrectCode = '';
+
+// État du jeu
+let gameState = {
+  mode: 'css',
+  difficulty: 'easy',
+  levelIndex: 0,
+  score: 0,
+  streak: 0,
+  hintsLeft: MAX_HINTS,
+  totalLevels: 0,
+  achievements: [],
+  startTime: null
+};
+
+// Variables globales
+let currentMode = 'css';
+let currentDifficulty = 'easy';
+let currentLevelIndex = 0;
+let score = 0;
+let hintsUsed = 0;
+let startTime;
+let timerInterval;
+let gameStarted = false;
+
+// Suivi de la progression
+let progress = {
+  css: { easy: 0, medium: 0, hard: 0 },
+  html: { easy: 0, medium: 0, hard: 0 },
+  htmlcss: { easy: 0, medium: 0, hard: 0 }
+};
+
+// Système de succès
+const achievementsList = [
+  { id: 'first_win', icon: '🎉', name: 'Première Victoire', condition: () => score >= 100 },
+  { id: 'streak_5', icon: '🔥', name: 'Série de 5', condition: () => gameState.streak >= 5 },
+  { id: 'no_hints', icon: '🧠', name: 'Aucun Indice', condition: () => gameState.hintsLeft === MAX_HINTS && currentLevelIndex > 0 },
+  { id: 'perfectionist', icon: '💎', name: 'Perfectionniste', condition: () => gameState.perfectMatch }
+];
+
+// Base de données des niveaux
+const levels = {
+  css: {
+    easy: [
+      { desc: 'Carré bleu, 100x100px', css: 'width:100px; height:100px; background:#1CCAE8;', hint: 'Définissez la largeur, la hauteur et la couleur de fond' },
+      { desc: 'Cercle parfait, vert lime', css: 'width:120px; height:120px; background:#91E413; border-radius:50%;', hint: 'Utilisez border-radius: 50% pour les cercles' },
+      { desc: 'Rectangle rouge, large', css: 'width:200px; height:80px; background:#FF006E;', hint: 'La largeur doit être supérieure à la hauteur' },
+      { desc: 'Coins arrondis, turquoise', css: 'width:150px; height:100px; background:#56D9BA; border-radius:20px;', hint: 'border-radius ajoute des coins arrondis' },
+      { desc: 'Carré jaune avec bordure', css: 'width:100px; height:100px; background:#FFBE0B; border:4px solid #161330;', hint: 'Ajoutez une propriété border' },
+      { desc: 'Forme ovale violette', css: 'width:180px; height:100px; background:#9D4EDD; border-radius:50%;', hint: 'Ovale = largeur/hauteur différentes avec border-radius à 50%' },
+      { desc: 'Petit point cyan', css: 'width:40px; height:40px; background:#06FFA5; border-radius:50%;', hint: 'Petit cercle avec couleur vive' },
+      { desc: 'Forme de pilule orange', css: 'width:150px; height:60px; background:#FF6B35; border-radius:30px;', hint: 'Pilule = hauteur/2 pour border-radius' }
+    ],
+    medium: [
+      { desc: 'Dégradé bleu à violet', css: 'width:150px; height:150px; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);', hint: 'Utilisez linear-gradient()' },
+      { desc: 'Boîte avec effet d\'ombre', css: 'width:120px; height:120px; background:#1CCAE8; box-shadow:0 10px 30px rgba(0,0,0,0.5);', hint: 'box-shadow: x y flou couleur' },
+      { desc: 'Carré tourné', css: 'width:100px; height:100px; background:#91E413; transform:rotate(45deg);', hint: 'Utilisez transform: rotate()' },
+      { desc: 'Cercle agrandi', css: 'width:80px; height:80px; background:#FF006E; border-radius:50%; transform:scale(1.5);', hint: 'transform: scale() augmente la taille' },
+      { desc: 'Boîte à moitié transparente', css: 'width:130px; height:130px; background:#56D9BA; opacity:0.5;', hint: 'opacity va de 0 à 1' },
+      { desc: 'Bordures multiples', css: 'width:100px; height:100px; background:#FFBE0B; border:5px solid #FF006E; outline:3px solid #1CCAE8; outline-offset:3px;', hint: 'Utilisez border et outline' },
+      { desc: 'Rectangle incliné', css: 'width:140px; height:90px; background:#9D4EDD; transform:skewX(-10deg);', hint: 'transform: skewX() incline horizontalement' },
+      { desc: 'Boîte lumineuse', css: 'width:120px; height:120px; background:#06FFA5; box-shadow:0 0 20px #06FFA5, 0 0 40px #06FFA5;', hint: 'Plusieurs box-shadows créent un effet de lueur' }
+    ],
+    hard: [
+      { desc: 'Motif de dégradé complexe', css: 'width:150px; height:150px; background:linear-gradient(45deg, #667eea 0%, #764ba2 50%, #f093fb 100%);', hint: 'Utilisez plusieurs arrêts de couleur dans le dégradé' },
+      { desc: 'Animation de pulsation (utilisez animation)', css: 'width:100px; height:100px; background:#FF006E; border-radius:50%; animation:pulse 2s infinite; @keyframes pulse { 0%, 100% { transform:scale(1); } 50% { transform:scale(1.1); } }', hint: 'Définissez @keyframes et utilisez la propriété animation' },
+      { desc: 'Face de cube en 3D', css: 'width:120px; height:120px; background:#1CCAE8; transform:perspective(500px) rotateY(25deg) rotateX(25deg);', hint: 'Utilisez perspective() avec plusieurs rotations' },
+      { desc: 'Style néomorphisme', css: 'width:140px; height:140px; background:#e0e5ec; border-radius:20px; box-shadow:9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;', hint: 'Ombres douces dans des directions opposées' },
+      { desc: 'Hexagone avec clip-path', css: 'width:150px; height:150px; background:#91E413; clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);', hint: 'Utilisez clip-path: polygon()' },
+      { desc: 'Effet de lueur sur texte', css: 'width:180px; height:100px; background:#161330; color:#06FFA5; display:flex; align-items:center; justify-content:center; font-size:24px; text-shadow:0 0 10px #06FFA5; &::before { content:"LUEUR"; }', hint: 'Utilisez text-shadow et le pseudo-élément ::before' }
+    ]
+  },
+  html: {
+    easy: [
+      { desc: 'Bouton simple', html: '<button>Cliquez-moi</button>', hint: 'Utilisez la balise <button>' },
+      { desc: 'Titre', html: '<h2>Bienvenue</h2>', hint: 'Utilisez les balises de titre comme <h1>, <h2>' },
+      { desc: 'Paragraphe', html: '<p>Ceci est un paragraphe de texte.</p>', hint: 'Utilisez la balise <p>' },
+      { desc: 'Lien', html: '<a href="#">Lien</a>', hint: 'Utilisez la balise <a> avec href' },
+      { desc: 'Image', html: '<img src="image.jpg" alt="Image">', hint: 'Utilisez la balise <img> avec src' },
+      { desc: 'Liste non ordonnée', html: '<ul><li>Élément 1</li><li>Élément 2</li></ul>', hint: 'Utilisez les balises <ul> et <li>' },
+      { desc: 'Champ de saisie', html: '<input type="text" placeholder="Tapez ici">', hint: 'Utilisez la balise <input>' },
+      { desc: 'Case à cocher', html: '<input type="checkbox"> <label>Accepter</label>', hint: 'Utilisez input type="checkbox"' }
+    ],
+    medium: [
+      { desc: 'Formulaire avec étiquette', html: '<form><label>Nom:</label><input type="text"></form>', hint: 'Encadrez avec <form>, utilisez <label>' },
+      { desc: 'Conteneur div avec span', html: '<div>Texte avec <span style="color:#91E413;">coloré</span> mot</div>', hint: 'Utilisez <div> et <span>' },
+      { desc: 'Listes imbriquées', html: '<ul><li>Parent<ul><li>Enfant</li></ul></li></ul>', hint: 'Imbriquez <ul> dans <li>' },
+      { desc: 'Structure de tableau', html: '<table><tr><td>Cellule 1</td><td>Cellule 2</td></tr></table>', hint: 'Utilisez <table>, <tr>, <td>' },
+      { desc: 'Menu déroulant', html: '<select><option>Option 1</option><option>Option 2</option></select>', hint: 'Utilisez <select> et <option>' },
+      { desc: 'Élément textarea', html: '<textarea rows="3">Tapez ici...</textarea>', hint: 'Utilisez <textarea> avec rows' },
+      { desc: 'Article avec en-tête', html: '<article><header><h3>Titre</h3></header><p>Contenu</p></article>', hint: 'Utilisez les balises sémantiques' }
+    ],
+    hard: [
+      { desc: 'Formulaire complexe', html: '<form><fieldset><legend>Info</legend><label>Email:</label><input type="email" required><button type="submit">Soumettre</button></fieldset></form>', hint: 'Utilisez fieldset, legend et l\'attribut required' },
+      { desc: 'Navigation avec liens', html: '<nav><ul><li><a href="#home">Accueil</a></li><li><a href="#about">À propos</a></li></ul></nav>', hint: 'Utilisez <nav> avec une liste de liens' },
+      { desc: 'Attributs de données', html: '<div data-user="123" data-role="admin">Carte utilisateur</div>', hint: 'Ajoutez des attributs data-*' },
+      { desc: 'SVG intégré', html: '<svg width="80" height="80"><circle cx="40" cy="40" r="35" fill="#1CCAE8"/></svg>', hint: 'Créez un SVG intégré avec des formes' },
+      { desc: 'Details/Summary', html: '<details><summary>Cliquez pour développer</summary><p>Contenu caché révélé !</p></details>', hint: 'Utilisez <details> et <summary>' }
+    ]
+  },
+  htmlcss: {
+    easy: [
+      { desc: 'Bouton stylisé', html: '<button>Cliquer</button>', css: 'button { background:#56D9BA; color:#161330; padding:12px 24px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }', hint: 'Stylez le bouton avec des couleurs et du padding' },
+      { desc: 'Texte centré', html: '<div>Centré</div>', css: 'div { text-align:center; font-size:20px; color:#91E413; }', hint: 'Utilisez text-align: center' },
+      { desc: 'Mise en page de carte', html: '<div class="card">Contenu de la carte</div>', css: '.card { background:#1a1a2e; padding:20px; border-radius:10px; color:white; }', hint: 'Créez une carte avec padding et border-radius' },
+      { desc: 'Effet au survol', html: '<button>Survolez-moi</button>', css: 'button { background:#1CCAE8; color:white; padding:10px 20px; border:none; border-radius:5px; transition:0.3s; } button:hover { background:#91E413; transform:scale(1.05); }', hint: 'Ajoutez un état :hover avec transition' }
+    ],
+    medium: [
+      { desc: 'Centrage avec Flexbox', html: '<div class="container"><span>Centré</span></div>', css: '.container { display:flex; align-items:center; justify-content:center; width:200px; height:150px; background:#161330; } span { color:#91E413; font-size:18px; }', hint: 'Utilisez les propriétés flexbox' },
+      { desc: 'Mise en page Grid', html: '<div class="grid"><div>1</div><div>2</div><div>3</div><div>4</div></div>', css: '.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:200px; } .grid div { background:#56D9BA; padding:20px; text-align:center; border-radius:5px; }', hint: 'Utilisez CSS Grid' },
+      { desc: 'Composant badge', html: '<span class="badge">Nouveau</span>', css: '.badge { background:#FF006E; color:white; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:bold; display:inline-block; }', hint: 'Créez un petit élément badge' },
+      { desc: 'Bouton avec icône', html: '<button>⭐ Étoile</button>', css: 'button { background:linear-gradient(135deg, #667eea, #764ba2); color:white; border:none; padding:12px 20px; border-radius:8px; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.2); }', hint: 'Utilisez un dégradé en arrière-plan' }
+    ],
+    hard: [
+      { desc: 'Carte glassmorphism', html: '<div class="glass">Effet Verre</div>', css: '.glass { background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2); border-radius:15px; padding:30px; color:white; box-shadow:0 8px 32px rgba(0,0,0,0.3); }', hint: 'Utilisez backdrop-filter et la transparence' },
+      { desc: 'Loader animé', html: '<div class="loader"></div>', css: '.loader { width:50px; height:50px; border:5px solid #333; border-top-color:#1CCAE8; border-radius:50%; animation:spin 1s linear infinite; } @keyframes spin { to { transform:rotate(360deg); } }', hint: 'Créez une animation de rotation' },
+      { desc: 'Infobulle au survol', html: '<button data-tooltip="Ceci est une infobulle">Survol</button>', css: 'button { position:relative; background:#91E413; color:#161330; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; } button::after { content:attr(data-tooltip); position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:#161330; color:white; padding:8px 12px; border-radius:5px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:0.3s; } button:hover::after { opacity:1; }', hint: 'Utilisez le pseudo-élément ::after avec attr()' },
+      { desc: 'Mise en page de carte complexe', html: '<div class="card"><div class="header">Titre</div><div class="body">Texte de contenu ici</div><div class="footer"><button>Action</button></div></div>', css: '.card { background:#1a1a2e; border-radius:12px; overflow:hidden; width:250px; box-shadow:0 10px 30px rgba(0,0,0,0.5); } .header { background:linear-gradient(135deg, #1CCAE8, #56D9BA); padding:20px; color:white; font-weight:bold; } .body { padding:20px; color:#ccc; } .footer { padding:15px; background:#161330; } .footer button { background:#91E413; color:#161330; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; }', hint: 'Combinez plusieurs techniques de style' }
+    ]
+  }
+};
+
+// Charger la progression depuis le stockage
+async function loadProgress() {
+  try {
+    const savedProgress = localStorage.getItem('cssMatchProgress');
+    if (savedProgress) {
+      progress = JSON.parse(savedProgress);
+    }
+  } catch (e) {
+    console.log('Aucune progression sauvegardée trouvée');
+  }
+}
+
+// Sauvegarder la progression dans le stockage
+async function saveProgress() {
+  try {
+    localStorage.setItem('cssMatchProgress', JSON.stringify(progress));
+  } catch (e) {
+    console.error('Échec de la sauvegarde de la progression');
+  }
+}
+
+// Initialiser le jeu
+async function init() {
+  await loadProgress();
+  updateProgressDisplay();
+  updateAchievements();
+  loadLevel();
+}
+
+// Sélection mode (CSS / HTML / HTML+CSS)
+function selectMode(mode, btn) {
+  currentMode = mode;
+  currentDifficulty = 'easy';
+  currentLevelIndex = 0;
+
+  document.querySelectorAll('.level-selection button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Mettre Facile comme difficulté par défaut
+  document.querySelectorAll('.difficulty-btn').forEach(b => {
+    if (b.textContent.trim() === 'Facile') {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+
+  loadLevel();
+}
+
+// Changer de difficulté
+function setDifficulty(diff, btn) {
+  currentDifficulty = diff;
+  currentLevelIndex = 0;
+
+  document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  loadLevel();
+}
+
+// Chargement d'un niveau
+function loadLevel() {
+  const levelArray = levels[currentMode][currentDifficulty];
+  if (!levelArray || currentLevelIndex >= levelArray.length) {
+    showCompletionMessage();
+    return;
+  }
+
+  const level = levelArray[currentLevelIndex];
+
+  // Réinitialiser indices pour ce niveau
+  hintsUsed = 0;
+  gameState.hintsLeft = MAX_HINTS;
+  hintsLeftDisplay.textContent = MAX_HINTS;
+
+  // Réinitialiser l'UI
+  editorEl.value = '';
+  resultMessage.textContent = '';
+  resultMessage.className = 'result-message';
+  hintBox.style.display = 'none';
+  hintBox.textContent = '';
+  feedback.style.display = 'none';
+
+  // Reset des previews
+  challengePreview.innerHTML = '';
+  challengePreview.style.cssText = '';
+  preview.innerHTML = '';
+  preview.style.cssText = '';
+
+  // Comparaison désactivée en début de niveau
+  comparisonView.style.display = 'none';
+  canCompare = false;
+  lastCorrectCode = '';
+  if (compareBtn) {
+    compareBtn.disabled = true;
+    compareBtn.style.opacity = '0.6';
+    compareBtn.style.cursor = 'not-allowed';
+  }
+
+  // Mettre à jour la description
+  challengeDesc.textContent = level.desc;
+
+  // Configurer l'aperçu du défi selon le mode
+  if (currentMode === 'css') {
+    challengePreview.style.cssText = level.css || '';
+  } else if (currentMode === 'html') {
+    challengePreview.innerHTML = level.html || '';
+  } else {
+    const html = level.html || '';
+    const css = level.css || '';
+    challengePreview.innerHTML = `<style>${css}</style>${html}`;
+  }
+
+  // Mettre à jour le compteur de niveau
+  const totalLevels = levelArray.length;
+  levelCounter.textContent = `Niveau ${currentLevelIndex + 1}/${totalLevels}`;
+  levelBadge.textContent = `Niveau ${currentLevelIndex + 1}`;
+  levelNum.textContent = currentLevelIndex + 1;
+
+  // Placeholder éditeur
+  if (currentMode === 'css') {
+    editorEl.placeholder = 'Écrivez votre CSS ici...';
+  } else if (currentMode === 'html') {
+    editorEl.placeholder = 'Écrivez votre HTML ici...';
+  } else {
+    editorEl.placeholder = 'Écrivez votre CSS pour styliser le HTML du niveau...';
+  }
+
+  // Palette de couleurs dynamique
+  updateColorPaletteForLevel(level);
+
+  updateProgressDisplay();
+  updateLivePreview();
+}
+
+// Timer (uniquement après clic sur Start)
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }, 1000);
+}
+
+// Aperçu en direct
+function updateLivePreview() {
+  const level = levels[currentMode][currentDifficulty][currentLevelIndex];
+
+  try {
+    if (currentMode === 'css') {
+      preview.innerHTML = '';
+      preview.style.cssText = editorEl.value;
+    } else if (currentMode === 'html') {
+      preview.style.cssText = '';
+      preview.innerHTML = editorEl.value;
+    } else {
+      const userCode = editorEl.value;
+      const baseHtml = level.html || '';
+      preview.style.cssText = '';
+      preview.innerHTML = `<style>${userCode}</style>${baseHtml}`;
+    }
+  } catch (e) {
+    console.error("Erreur dans l'aperçu en direct:", e);
+  }
+}
+
+function checkAnswer() {
+  const level = levels[currentMode][currentDifficulty][currentLevelIndex];
+  const userCode = editorEl.value.trim();
+
+  let isCorrect = false;
+
+  if (currentMode === 'css') {
+    isCorrect = compareCSSProperties(userCode, level.css);
+  } else if (currentMode === 'html') {
+    isCorrect = compareHTML(userCode, level.html);
+  } else {
+    isCorrect = compareCSSCode(userCode, level.css);
+  }
+
+  if (isCorrect) {
+    handleCorrectAnswer();
+  } else {
+    handleIncorrectAnswer();
+  }
+}
+
+// Comparaison de propriétés CSS inline (mode CSS simple)
+function compareCSSProperties(user, expected) {
+  if (!user || !expected) return false;
+
+  // Si le CSS attendu ressemble à une feuille complète, bascule sur compareCSSCode
+  if (expected.includes('{') || expected.includes('@')) {
+    return compareCSSCode(user, expected);
+  }
+
+  const normalize = (css) => {
+    return css
+      .replace(/\s*:\s*/g, ':')
+      .replace(/\s*;\s*/g, ';')
+      .replace(/;$/, '')
+      .split(';')
+      .map(prop => prop.trim())
+      .filter(prop => prop)
+      .sort()
+      .join(';');
+  };
+
+  return normalize(user) === normalize(expected);
+}
+
+// Comparaison CSS "complet" (avec sélecteurs, @keyframes, etc.)
+function compareCSSCode(user, expected) {
+  if (!user || !expected) return false;
+
+  const normalize = (css) => {
+    return css
+      .replace(/\s+/g, ' ')
+      .replace(/\s*{\s*/g, '{')
+      .replace(/\s*}\s*/g, '}')
+      .replace(/\s*;\s*/g, ';')
+      .trim()
+      .toLowerCase();
+  };
+
+  return normalize(user) === normalize(expected);
+}
+
+// Comparaison HTML plus tolérante
+function compareHTML(user, expected) {
+  if (!user || !expected) return false;
+
+  const normalize = (html) => {
+    const container = document.createElement('div');
+    container.innerHTML = html.trim();
+    return container.innerHTML
+      .replace(/\s+/g, ' ')
+      .replace(/>\s+</g, '><')
+      .trim()
+      .toLowerCase();
+  };
+
+  return normalize(user) === normalize(expected);
+}
+
+function handleCorrectAnswer() {
+  showResult(true);
+  const points = Math.max(20, 100 - (hintsUsed * 20)); // min 20 pts
+  score += points;
+  gameState.score = score;
+  gameState.streak++;
+  scoreDisplay.textContent = score;
+  streakDisplay.textContent = gameState.streak;
+
+  // Autoriser la comparaison une fois le niveau réussi
+  canCompare = true;
+  lastCorrectCode = editorEl.value.trim();
+  if (compareBtn) {
+    compareBtn.disabled = false;
+    compareBtn.style.opacity = '1';
+    compareBtn.style.cursor = 'pointer';
+  }
+
+  progress[currentMode][currentDifficulty] = Math.max(
+    progress[currentMode][currentDifficulty],
+    currentLevelIndex + 1
+  );
+  saveProgress();
+
+  updateAchievements();
+
+  setTimeout(() => {
+    currentLevelIndex++;
+    loadLevel();
+  }, 1500);
+}
+
+function handleIncorrectAnswer() {
+  showResult(false);
+  gameState.streak = 0;
+  streakDisplay.textContent = gameState.streak;
+}
+
+function showResult(isCorrect) {
+  if (isCorrect) {
+    resultMessage.textContent = '✓ Correct ! Bien joué !';
+    resultMessage.className = 'result-message correct';
+    confetti();
+  } else {
+    resultMessage.textContent = '✗ Pas tout à fait correct. Réessayez !';
+    resultMessage.className = 'result-message incorrect';
+  }
+}
+
+function getHint() {
+  if (hintsUsed >= MAX_HINTS) {
+    alert('Vous avez utilisé tous vos indices !');
+    return;
+  }
+
+  const level = levels[currentMode][currentDifficulty][currentLevelIndex];
+  hintBox.textContent = level.hint;
+  hintBox.style.display = 'block';
+  hintsUsed++;
+  gameState.hintsLeft = MAX_HINTS - hintsUsed;
+  hintsLeftDisplay.textContent = gameState.hintsLeft;
+}
+
+function resetCode() {
+  editorEl.value = '';
+  updateLivePreview();
+}
+
+function skipLevel() {
+  if (confirm('Passer ce niveau ? Vous ne gagnerez pas de points.')) {
+    currentLevelIndex++;
+    loadLevel();
+  }
+}
+
+function toggleComparison() {
+  if (!canCompare) {
+    alert('Tu pourras comparer ton code une fois le niveau validé 😉');
+    return;
+  }
+
+  comparisonView.style.display =
+    comparisonView.style.display === 'none' || comparisonView.style.display === ''
+      ? 'block'
+      : 'none';
+
+  if (comparisonView.style.display === 'block') {
+    const level = levels[currentMode][currentDifficulty][currentLevelIndex];
+    let expectedCode = '';
+    let userCode = lastCorrectCode || editorEl.value.trim();
+
+    if (currentMode === 'css') {
+      expectedCode = level.css || '';
+    } else if (currentMode === 'html') {
+      expectedCode = level.html || '';
+    } else {
+      expectedCode = level.css || '';
+    }
+
+    comparisonView.innerHTML = `
+      <h4>Comparaison</h4>
+      <div class="comparison-row">
+        <div>
+          <strong>Attendu :</strong>
+          <pre>${expectedCode}</pre>
+        </div>
+        <div>
+          <strong>Ton code :</strong>
+          <pre>${userCode || 'Aucun code'}</pre>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function nextLevel() {
+  feedback.style.display = 'none';
+  currentLevelIndex++;
+  loadLevel();
+}
+
+function updateProgressDisplay() {
+  const totalLevels = levels[currentMode][currentDifficulty].length;
+  const completed = currentLevelIndex; // 0 au début
+  const progressPercent = (completed / totalLevels) * 100;
+  progressFill.style.width = `${progressPercent}%`;
+}
+
+function showCompletionMessage() {
+  resultMessage.textContent = '🎉 Félicitations ! Vous avez terminé tous les niveaux de cette difficulté !';
+  resultMessage.className = 'result-message correct';
+  confetti();
+
+  setTimeout(() => {
+    currentLevelIndex = 0;
+    loadLevel();
+  }, 4000);
+}
+
+function updateAchievements() {
+  achievementsContainer.innerHTML = '';
+
+  achievementsList.forEach(achievement => {
+    if (achievement.condition() && !gameState.achievements.includes(achievement.id)) {
+      gameState.achievements.push(achievement.id);
+      const achievementEl = document.createElement('div');
+      achievementEl.className = 'achievement';
+      achievementEl.innerHTML = `${achievement.icon} ${achievement.name}`;
+      achievementsContainer.appendChild(achievementEl);
+    }
+  });
+}
+
+function confetti() {
+  for (let i = 0; i < 50; i++) {
+    const confetto = document.createElement('div');
+    confetto.className = 'confetti';
+    confetto.style.left = Math.random() * 100 + '%';
+    confetto.style.animationDelay = Math.random() * 0.5 + 's';
+    confetto.style.background = ['#91E413', '#1CCAE8', '#56D9BA', '#FF006E', '#FFBE0B'][Math.floor(Math.random() * 5)];
+    document.body.appendChild(confetto);
+    setTimeout(() => confetto.remove(), 3000);
+  }
+}
+
+// --- Gestion des couleurs du niveau ---
+
+function extractHexColors(str) {
+  const colors = new Set();
+  if (!str) return colors;
+
+  const hexRegex = /#([0-9a-fA-F]{3,8})\b/g;
+  let match;
+  while ((match = hexRegex.exec(str)) !== null) {
+    colors.add(('#' + match[1]).toUpperCase());
+  }
+  return colors;
+}
+
+function updateColorPaletteForLevel(level) {
+  if (!colorPalette) return;
+
+  colorPalette.innerHTML = '';
+
+  const allColors = new Set();
+  const parts = [level.css, level.html];
+  parts.forEach(part => {
+    const set = extractHexColors(part || '');
+    set.forEach(c => allColors.add(c));
+  });
+
+  if (allColors.size === 0) {
+    colorPalette.innerHTML = '<span style="opacity:0.6;font-size:0.85rem;">Aucune couleur spécifique pour ce niveau.</span>';
+    return;
+  }
+
+  allColors.forEach(code => {
+    const item = document.createElement('div');
+    item.className = 'color-item';
+    item.innerHTML = `
+      <div class="color-swatch" style="background:${code};"></div>
+      <span class="color-code">${code}</span>
+      <button class="btn-copy" type="button">Copier</button>
+    `;
+    const btn = item.querySelector('.btn-copy');
+    btn.addEventListener('click', () => copyColor(code, btn));
+    colorPalette.appendChild(item);
+  });
+}
+
+function copyColor(code, btn) {
+  if (!navigator.clipboard) {
+    const tempInput = document.createElement('input');
+    tempInput.value = code;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+  } else {
+    navigator.clipboard.writeText(code);
+  }
+
+  const oldText = btn.textContent;
+  btn.textContent = 'Copié !';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }, 1200);
+}
+
+// Start game
+function startGame() {
+  if (gameStarted) return;
+
+  gameStarted = true;
+  score = 0;
+  gameState.score = 0;
+  gameState.streak = 0;
+  scoreDisplay.textContent = '0';
+  streakDisplay.textContent = '0';
+  startTime = Date.now();
+  startTimer();
+
+  startBtn.textContent = 'En cours...';
+  startBtn.disabled = true;
+}
+
+// Écouteurs d'événements
+editorEl.addEventListener('input', updateLivePreview);
+startBtn.addEventListener('click', startGame);
+if (compareBtn) {
+  compareBtn.addEventListener('click', toggleComparison);
+}
+
+// Initialiser le jeu
+init();

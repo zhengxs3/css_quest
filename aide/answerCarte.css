@@ -1,0 +1,322 @@
+.flex{
+  display: flex;
+  gap: 50px;
+  margin: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/*----------Easy css-------------------------------------------------*/
+
+.carte11 {
+  width: 94px;    
+  height: 94px;    
+  background-color: #FF0000;    
+  border-radius: 50%; 
+}
+
+.carte12 {
+  width: 87px;    
+  height: 137px;  
+  border: 6px solid #E04997;
+  border-radius: 12px; 
+}
+
+.carte13 {
+  width: 100px;
+  height: 138px;
+  background-color: #1CCAE8;
+}
+
+.carte14 {
+  width: 80px;
+  height: 80px;
+  background-color: #D25400;
+  transform: rotate(45deg);
+}
+
+.carte15 {
+  width: 100px;    
+  height: 100px;  
+  background-color: #7DDBEB; /* change #FFFFFF */
+  border-radius: 10px; 
+}
+
+.carte16 {
+  width: 93px;    
+  height: 93px;    
+  background-color: #0055FF;    
+  border-radius: 50%; 
+  border: 7px solid #FDF3F3;
+}
+
+.carte17 {
+  width: 0;
+  height: 0;
+  border-left: 59px solid transparent;
+  border-right: 59px solid transparent;
+  border-bottom: 118px solid #D9D9D9;
+}
+
+.carte18 {
+  width: 0;
+  height: 0;
+  border-left: 64px solid transparent;
+  border-right: 64px solid transparent;
+  border-top: 128px solid #0E11D3;
+}
+
+
+.carte19 {
+  width: 86px;    
+  height: 165px;  
+  background-color: #91E413;
+  border-radius: 50px; 
+}
+
+.carte20 {
+  width: 100px;    
+  height: 154px;  
+  background-color: #E04997;
+  border: 6px solid #EE7B00;
+  border-radius: 50%; 
+}
+
+/*----------Easy html + CSS-------------------------------------------------*/
+.carte21 {
+  width: 107px;    
+  height: 34px;  
+  background-color: #34A60A ;
+  color: #FFFFFF;
+  border-radius: 5px; 
+  border: none;
+}
+
+.carte22 {
+  color: #25DCE6;
+}
+
+.carte23 {
+  width: 107px;    
+  height: 34px;  
+  background: none ;
+  color: #e33232;
+  border-radius: 5px; 
+  border: 1px solid #ED07C3;
+}
+
+.carte24 {
+  width: 107px;    
+  height: 34px;  
+  background-color: #69677D ;
+  color: #1CCAE8;
+  border-radius: 5px; 
+  border: 1px solid #1CCAE8;
+}
+
+.carte24:active {
+  width: 107px;    
+  height: 34px;  
+  background-color: #1CCAE8 ;
+  color: #69677D;
+  border-radius: 5px; 
+}
+
+.carte25 {
+  width: 55px;    
+  height: 55px;    
+  background-color: #7DDBEB;    
+  border-radius: 50%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carte26 {
+  color: #ff0000;
+}
+.carte26_1 {
+  border-radius: 5px;
+}
+
+.carte27 {
+  color: #ff0000;
+}
+.carte27_1 {
+  color: #25DCE6; 
+  display: inline;
+}
+
+.carte28 {
+  color: #ff0000;
+}
+
+.carte29 {
+  color: rgb(255, 0, 0);
+}
+.carte29_1 {
+  margin-left: 15px;
+  list-style: circle; 
+}
+
+.carte30 {
+  width: 100px;
+  height: 57px;  
+  border-radius: 5px;
+  background: #ff7979;
+  text-align: center;
+}
+
+
+
+/*----------Medium--------------------------------------------------*/
+.carte41 {
+  width: 100px;
+  height: 152px;
+  background-color: #D25400;
+  clip-path: polygon( 50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.carte42 {
+  width: 0;
+  height: 0;
+  position: relative;
+  border-left: 54.5px solid transparent;
+  border-right: 54.5px solid transparent; /* 109/2=54.5 */
+  border-bottom: 109px solid rgb(14, 17, 211);
+}
+.carte42::after { 
+  content: ""; 
+  width: 0; 
+  height: 0; 
+  top: 8px; 
+  position: absolute; 
+  transform: translateX(-50%);
+  border-left: 48.5px solid transparent; 
+  border-right: 48.5px solid transparent; 
+  border-bottom: 97px solid rgb(251, 234, 8); /* border:6px = 6*2 = 12px 109-12=97*/
+}
+
+.carte43{
+  width: 100px;
+  height: 126px;
+  background:linear-gradient(#ED07C3,#25DCE6);
+  clip-path: polygon( 50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+
+.carte44 {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background:#91E413; 
+  box-shadow:0 0 20px #91E413, 0 0 40px #507E0B;
+}
+
+.carte45 {
+  width: 81px;
+  height: 81px;
+  border-radius: 50%;
+  background: #ff0000;
+
+  box-shadow:
+    0 0 0 9.5px #690368, 
+    0 0 0 19px #9d9d9d;
+}
+
+.carte46 {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  border-radius: 50%;
+  background: #FF5900;
+  border: 3px dashed #FFFB00;
+}
+.carte46::after {
+  content: ""; 
+  width: 100px;
+  height: 100px;
+  top: 80px; 
+  position: absolute; 
+  border-radius: 50%;
+  background: #FF5900;
+  border: 3px dashed #FFFB00;
+}
+
+.carte47 {
+  width: 86px;
+  height: 93px;
+  position: relative;
+
+  background: #7CF21A;
+  clip-path: polygon(
+    50% 0%,   
+    93% 25%,   
+    93% 75%,   
+    50% 100%,  
+    7% 75%,    
+    7% 25%    
+    );
+}
+
+
+.carte47::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  background: #161330;
+  clip-path: polygon(
+    50% 0%,
+    93% 25%,
+    93% 75%,
+    50% 100%,
+    7% 75%,
+    7% 25%
+  );
+}
+
+
+
+
+
+.carte5 {
+  width: 128px;
+  height: 128px;
+  background: #0E11D3;
+  clip-path: polygon(
+    50% 100%,   /* 下尖 */
+    0% 25%,     /* 左上 */
+    100% 25%    /* 右上 */
+  );
+  border-radius: 10px;  /* 关键：让角变圆 */
+}
+
+
+.carte6 {
+
+}
+.carte7 {
+
+}
+.carte8 {
+
+}
+
+
+/*----------Hard--------------------------------------------------*/
+
+
+
+/*----------html + CSS--------------------------------------------------*/
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 100px solid rgb(78, 255, 243);
+}
+
+.wrap {
+  transform: scale(2); /* 放大 2 倍 */
+  transform-origin: center;
+}

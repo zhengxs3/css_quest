@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Match — Ultimate Edition</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="assets/logo.png">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+          <img src="assets/logo.png" alt="" width="80" height="80">
+
+            <h1>CSS Match — Ultimate Edition</h1>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Score</span>
+                    <span class="stat-value" id="score">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Streak</span>
+                    <span class="stat-value" id="streak">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Level</span>
+                    <span class="stat-value" id="levelNum">1</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Hints</span>
+                    <span class="stat-value" id="hintsLeft">3</span>
+                </div>
+            </div>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" onclick="setDifficulty('easy', this)">Easy</button>
+                <button class="difficulty-btn" onclick="setDifficulty('medium', this)">Medium</button>
+                <button class="difficulty-btn" onclick="setDifficulty('hard', this)">Hardcore</button>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="level-counter" id="levelCounter">Level 1/8</div>
+        <div class="timer" id="timerDisplay">00:00</div>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+
+        
+
+        <div class="achievements" id="achievements"></div>
+
+  
+
+          <button class="btn btn-warning"><a style="text-decoration: none; color:var(--background);" href="https://www.w3schools.com/html/html_css.asp" target="_blank">Documentation</a></button>
+ 
+
+          <button class="btn btn-warning" style="margin: 10px;"><a style="text-decoration: none; color:var(--background);" href="/aide/answer.html" target="_blank">All responses</a></button>
+
+        <div class="level-selection">
+            <button class="active" onclick="selectMode('css', this)">CSS Only</button>
+            <button onclick="selectMode('html', this)">HTML Only</button>
+            <button onclick="selectMode('htmlcss', this)">HTML + CSS</button>
+        </div>
+
+        <div class="instruction" id="instruction">
+          Welcome! Recreate the example by writing the most optimized code possible. Click “Check” when you're ready!
+        </div>
+        <div class="result-message" id="resultMessage"></div>
+
+            <!-- Palette de couleurs du niveau courant -->
+            <div class="color-section">
+              <h3>Colors for level</h3>
+              <div class="color-palette" id="colorPalette"></div>
+            </div>
+  
+
+            <!-- Checkbox -->
+
+     
+          
+        <div class="checkbox-container">
+          <input class="holo-checkbox-input" id="holo-check" type="checkbox" />
+          <label class="holo-checkbox" for="holo-check">
+            <div class="holo-box">
+              <div class="holo-inner"></div>
+              <div class="scan-effect"></div>
+              <div class="holo-particles">
+                <div class="holo-particle"></div>
+                <div class="holo-particle"></div>
+                <div class="holo-particle"></div>
+                <div class="holo-particle"></div>
+                <div class="holo-particle"></div>
+                <div class="holo-particle"></div>
+              </div>
+        
+              <div class="activation-rings">
+                <div class="activation-ring"></div>
+                <div class="activation-ring"></div>
+                <div class="activation-ring"></div>
+              </div>
+        
+              <div class="cube-transform">
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+                <div class="cube-face"></div>
+              </div>
+            </div>
+        
+            <div class="corner-accent"></div>
+            <div class="corner-accent"></div>
+            <div class="corner-accent"></div>
+            <div class="corner-accent"></div>
+        
+            <div class="holo-glow"></div>
+          </label>
+        
+          <div class="status-text"></div>
+        
+          <div class="frequency-spectrum">
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+            <div class="frequency-bar"></div>
+          </div>
+        
+          <div class="data-chips">
+            <div class="data-chip">COMPLETION: NOT MANUAL</div>
+            <div class="data-chip">AUTO-SUGGEST: ENABLED</div>
+            <div class="data-chip">SCORE BONUS: -30%</div>
+            <div class="data-chip">PROFILE: NOOB SKILL</div>
+          </div>
+          
+        </div>
+        
+
+
+         <!-- Checkbox -->
+
+        
+
+        <div class="game-container">
+            <!-- Challenge Preview -->
+            <div class="panel">
+                <h3>
+                    Target
+                    <span class="level-badge" id="levelBadge">Level 1</span>
+                </h3>
+                <div class="challenge-description" id="challengeDesc"></div>
+                <div class="preview-container">
+                    <div id="challengePreview" class="preview-box"></div>
+                </div>
+            </div>
+
+            <!-- Editor -->
+            <div class="panel">
+                <h3>Your code</h3>
+                <textarea id="editor" placeholder="Écrivez votre CSS ici..."></textarea>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="checkAnswer()">✓ Verify</button>
+                    <button class="btn btn-secondary" onclick="getHint()">💡 Hint</button>
+                    <button class="btn btn-secondary" onclick="resetCode()">↻ Reset</button>
+                    <button class="btn btn-warning" onclick="skipLevel()">⏭ Skip</button>
+                </div>
+                <div class="hint-box" id="hintBox"></div>
+            </div>
+
+            <!-- Preview -->
+            <div class="panel">
+                <h3>Live preview</h3>
+                <div class="preview-container">
+                    <div id="preview" class="preview-box"></div>
+                </div>
+                <div class="actions">
+                 
+                </div>
+                <div class="comparison-view" id="comparisonView" style="display: none;"></div>
+            </div>
+        </div>
+
+        
+
+        <div class="feedback" id="feedback">
+            <h2 id="feedbackTitle">Success !</h2>
+            <p id="feedbackText">Good job !</p>
+            <button class="btn btn-success" onclick="nextLevel()">Next Level →</button>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

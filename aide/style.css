@@ -1,0 +1,149 @@
+.flex{
+    display: flex;
+}
+
+/*--------------------circle----------------------------------------*/
+.circle {    
+    width: 100px;    
+    height: 100px;    
+    background-color: red;    
+    border-radius: 50%; 
+    margin: 20px;
+}
+.circle1 {    
+    width: 100px;    
+    height: 100px;    
+    background-color: rgb(246, 255, 121);    
+    border-radius: 50%; 
+    margin: 20px;
+    border: 2px solid black;
+}
+.hollow-circle {
+    width: 100px;
+    height: 100px;
+    border: 5px solid rgb(245, 195, 166);
+    border-radius: 50%;
+    background-color: transparent;
+    margin: 20px;
+}
+
+.oval {
+    width: 150px;
+    height: 100px;
+    background-color: gold;
+    border-radius: 50%;
+    margin: 20px;
+}
+.oval1 {
+    width: 80px;
+    height: 100px;
+    background-color: lightpink;
+    border-radius: 50%;
+    margin: 20px;
+}
+
+/*--------------------triangle----------------------------------------*/
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid blue;
+    margin: 20px;
+}
+.triangle1 {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-top: 100px solid cyan;
+    margin: 20px;
+}
+.triangle2 {
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-right: 100px solid magenta;
+    margin: 20px;
+}
+.triangle3 {
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 100px solid yellow;
+    margin: 20px;
+}
+
+.right-angle {
+    width: 0;
+    height: 0;
+    border-bottom: 100px solid transparent;
+    border-left: 100px solid brown;
+    margin: 20px;
+}
+.right-angle1 {
+    width: 0;
+    height: 0;
+    border-top: 100px solid transparent;
+    border-right: 100px solid orange;
+    margin: 20px;
+}
+.right-angle2 {
+    width: 0;
+    height: 0;
+    border-top: 100px solid transparent;
+    border-left: 100px solid purple;
+    margin: 20px;
+}
+.right-angle3 {
+    width: 0;
+    height: 0;
+    border-bottom: 100px solid transparent;
+    border-right: 100px solid pink;
+    margin: 20px;
+}
+
+/*--------------------square----------------------------------------*/
+.square {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    margin: 20px;
+}
+.diamond {
+    width: 100px;
+    height: 100px;
+    background-color: purple;
+    transform: rotate(45deg);
+    margin: 20px;
+}
+.parallelogram {
+    width: 120px;
+    height: 100px;
+    background-color: lightblue;
+    transform: skew(-20deg);
+    margin: 20px;
+}
+.parallelogram1 {
+    width: 120px;
+    height: 100px;
+    background-color: lightgreen;
+    transform: skew(20deg);
+    margin: 20px;
+}
+
+.rectangle {
+    width: 150px;
+    height: 100px;
+    background-color: coral;
+    margin: 20px;
+}
+.rectangle1 {
+    width: 88px;
+    height: 100px;
+    background-color: lightgray;
+    margin: 20px;
+}
+

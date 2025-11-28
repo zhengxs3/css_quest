@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Triangle test</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    .carte2 {
+      width: 0;
+      height: 0;
+      position: relative;
+
+      /* 外层三角形（蓝色边框） */
+      border-left: 80px solid transparent;
+      border-right: 80px solid transparent;
+      border-bottom: 140px solid rgb(78, 255, 243);
+    }
+
+    .carte2::after {
+      content: "";
+      position: absolute;
+      top: 8px;   /* 控制“边框”厚度 */
+      left: 0;
+
+      width: 0;
+      height: 0;
+
+      /* 内层三角形（黄色）= 等比例缩小 */
+      border-left: 70px solid transparent;
+      border-right: 70px solid transparent;
+      border-bottom: 120px solid rgb(243, 253, 49);
+    }
+  </style>
+</head>
+<body>
+  <h1>html + CSS</h1>
+  <p>carte 2</p>
+  <div class="carte2"></div>
+</body>
+</html>
